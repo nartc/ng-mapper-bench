@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, NgZone} from '@angular/core';
 import {classes} from "@automapper/classes";
 import {CamelCaseNamingConvention, createMapper, mapFrom} from "@automapper/core";
 import {pojos} from "@automapper/pojos";
@@ -6,6 +6,8 @@ import {mapFrom as oldMapFrom, Mapper} from '@nartc/automapper';
 import {plainToClass} from "class-transformer";
 import {morphism} from "morphism";
 import 'reflect-metadata';
+import {defer, of, timer} from "rxjs";
+import {switchMapTo} from "rxjs/operators";
 import {OldUsersToken, TransformUsersToken, UsersToken} from "../constants";
 import {Bio, BioVm, User, UserVm} from "./models/models";
 import {OldBio, OldBioVm, OldUser, OldUserVm} from './models/models-old';
@@ -55,13 +57,34 @@ Mapper.createMap(OldBio, OldBioVm)
     selector: 'app-root',
     template: `
         <!--The content below is only a placeholder and can be replaced.-->
-        <input type="text" [(ngModel)]="times">
+        <p>
+            {{isExecuting ? 'executing...' : 'waiting. open your console'}}
+        </p>
+
+        <input type="text" [(ngModel)]="times" placeholder="how many iterations?">
+        <br>
+        <br>
         <button (click)="map(1)">map</button>
+        <br>
+        <br>
         <button (click)="map(2)">mapMorphism</button>
+        <br>
+        <br>
         <button (click)="map(3)">mapMorphismWithMapper</button>
+        <br>
+        <br>
         <button (click)="map(4)">mapClassTransformer</button>
-        <button (click)="map(5)">classMapperMap</button>
-        <button (click)="map(6)">pojosMapperMap</button>
+        <br>
+        <br>
+        <button (click)="map(5)">mapClassTransformerIterative</button>
+        <br>
+        <br>
+        <button (click)="map(6)">classMapperMap</button>
+        <br>
+        <br>
+        <button (click)="map(7)">pojosMapperMap</button>
+        <br>
+        <br>
         <button (click)="all()">All</button>
     `,
     styles: []
@@ -76,50 +99,67 @@ export class AppComponent {
     classMapperTimes = [];
     pojosMapperTimes = []
     transformMapperTimes = []
+    transformIterativeMapperTimes = []
+
+    isExecuting = false;
 
     mapperMap: { [key: number]: [Function, any[], string] } = {
         1: [this.mapMapper.bind(this), this.mapperTimes, '@nartc/automapper'],
         2: [this.mapMorphism.bind(this), this.mapMorphismTimes, 'morphism'],
         3: [this.mapMorphismWithMapper.bind(this), this.mapMorphismWithMapperTimes, 'morphism (with mapper)'],
-        4: [this.mapTransform.bind(this), this.transformMapperTimes, 'class-transformer'],
-        5: [this.mapClassMapper.bind(this), this.classMapperTimes, '@automapper/classes'],
-        6: [this.mapPojosMapper.bind(this), this.pojosMapperTimes, '@automapper/pojos'],
+        4: [this.mapTransform.bind(this), this.transformIterativeMapperTimes, 'class-transformer'],
+        5: [this.mapTransformIterative.bind(this), this.transformMapperTimes, 'class-transformer (iterative)'],
+        6: [this.mapClassMapper.bind(this), this.classMapperTimes, '@automapper/classes'],
+        7: [this.mapPojosMapper.bind(this), this.pojosMapperTimes, '@automapper/pojos'],
     };
 
-    constructor(@Inject(UsersToken) private users: User[], @Inject(OldUsersToken) private oldUsers: OldUser[], @Inject(TransformUsersToken) private transformUsers: TransformUser[]) {
+    constructor(@Inject(UsersToken) private users: User[], @Inject(OldUsersToken) private oldUsers: OldUser[], @Inject(TransformUsersToken) private transformUsers: TransformUser[], private ngZone: NgZone) {
     }
 
     all() {
-        this.mapInternal(1, false)
-        this.mapInternal(2, false)
-        this.mapInternal(3, false)
-        this.mapInternal(4, false)
-        this.mapInternal(5, false)
-        this.mapInternal(6, false)
+        this.isExecuting = true;
+        timer(0).pipe(
+            switchMapTo(defer(() => {
+                const tabularData = [];
 
-        const tabularData = [];
-        this.pushTo(1, tabularData);
-        this.pushTo(2, tabularData);
-        this.pushTo(3, tabularData);
-        this.pushTo(4, tabularData);
-        this.pushTo(5, tabularData);
-        this.pushTo(6, tabularData);
+                this.ngZone.runOutsideAngular(() => {
+                    this.mapInternal(1, false)
+                    this.mapInternal(2, false)
+                    this.mapInternal(3, false)
+                    this.mapInternal(4, false)
+                    this.mapInternal(5, false)
+                    this.mapInternal(6, false)
+                    this.mapInternal(7, false)
 
-        console.table(tabularData)
+                    this.pushTo(1, tabularData);
+                    this.pushTo(2, tabularData);
+                    this.pushTo(3, tabularData);
+                    this.pushTo(4, tabularData);
+                    this.pushTo(5, tabularData);
+                    this.pushTo(6, tabularData);
+                    this.pushTo(7, tabularData);
+                })
+
+                return of(tabularData)
+            }))
+        ).subscribe(data => {
+            console.table(data)
+            this.isExecuting = false;
+        })
     }
 
     pushTo(type, tabularData) {
         tabularData.push({
             name: this.mapperMap[type][2],
-            value: this.mapperMap[type][1].reduce((acc, cur) => acc + cur) / this.mapperMap[type][1].length
+            value: this.toMs(this.mapperMap[type][1].reduce((acc, cur) => acc + cur) / this.mapperMap[type][1].length)
         })
     }
 
-    map(type: 1 | 2 | 3 | 4 | 5 | 6) {
+    map(type: 1 | 2 | 3 | 4 | 5 | 6 | 7) {
         this.mapInternal(type);
     }
 
-    mapInternal(type: 1 | 2 | 3 | 4 | 5 | 6, log = true) {
+    mapInternal(type: 1 | 2 | 3 | 4 | 5 | 6 | 7, log = true) {
         const times = Number(this.times);
 
         if (isNaN(times)) {
@@ -132,7 +172,7 @@ export class AppComponent {
         }
 
         if (log) {
-            console.log('Average ', this.mapperMap[type][1].reduce((acc, cur) => acc + cur) / this.mapperMap[type][1].length);
+            console.log('Average ', this.toMs(this.mapperMap[type][1].reduce((acc, cur) => acc + cur) / this.mapperMap[type][1].length));
         }
     }
 
@@ -142,9 +182,26 @@ export class AppComponent {
         const t1 = performance.now();
 
         if (log) {
-            console.log(`transform mapper ${times - iteration}`, (t1 - t0).toFixed(4) + 'ms', vms);
+            console.log(`transform mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
         }
         this.transformMapperTimes.push(t1 - t0);
+    }
+
+    mapTransformIterative(iteration: number, times: number, log = true) {
+        const t0 = performance.now();
+        const vms = []
+
+        let i = this.transformUsers.length;
+        while(i--) {
+            vms.push(plainToClass(TransformUserVm, this.transformUsers[i], {excludeExtraneousValues: true}))
+        }
+
+        const t1 = performance.now();
+
+        if (log) {
+            console.log(`transform iterative mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
+        }
+        this.transformIterativeMapperTimes.push(t1 - t0);
     }
 
     mapClassMapper(iteration: number, times: number, log = true) {
@@ -153,7 +210,7 @@ export class AppComponent {
         const t1 = performance.now();
 
         if (log) {
-            console.log(`class mapper ${times - iteration}`, (t1 - t0).toFixed(4) + 'ms', vms);
+            console.log(`class mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
         }
         this.classMapperTimes.push(t1 - t0);
     }
@@ -164,7 +221,7 @@ export class AppComponent {
         const t1 = performance.now();
 
         if (log) {
-            console.log(`pojos mapper ${times - iteration}`, (t1 - t0).toFixed(4) + 'ms', vms);
+            console.log(`pojos mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
         }
         this.pojosMapperTimes.push(t1 - t0);
     }
@@ -174,7 +231,7 @@ export class AppComponent {
         const vms = Mapper.mapArray(this.oldUsers, OldUserVm);
         const t1 = performance.now();
         if (log) {
-            console.log(`mapper ${times - iteration}`, (t1 - t0).toFixed(4) + 'ms', vms);
+            console.log(`mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
         }
         this.mapperTimes.push(t1 - t0);
     }
@@ -193,7 +250,7 @@ export class AppComponent {
         }, this.users);
         const t1 = performance.now();
         if (log) {
-            console.log(`mapper-morphism ${times - iteration}`, (t1 - t0).toFixed(4) + 'ms', vmsMorp);
+            console.log(`mapper-morphism ${times - iteration}`, this.toMs((t1 - t0)), vmsMorp);
         }
         this.mapMorphismTimes.push(t1 - t0);
     }
@@ -214,8 +271,12 @@ export class AppComponent {
         const vmsMorpMapper = mapper(this.users);
         const t1 = performance.now();
         if (log) {
-            console.log(`mapper-morphism-create-mapper ${times - iteration}`, (t1 - t0).toFixed(4) + 'ms', vmsMorpMapper);
+            console.log(`mapper-morphism-create-mapper ${times - iteration}`, this.toMs((t1 - t0)), vmsMorpMapper);
         }
         this.mapMorphismWithMapperTimes.push(t1 - t0);
+    }
+
+    toMs(range: number) {
+        return range.toFixed(4) + 'ms'
     }
 }
