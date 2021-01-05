@@ -105,5 +105,8 @@
       }
     }
   },
-  "defaultProject": "ng-automapper-bench"
+  "defaultProject": "ng-automapper-bench",
+  "cli": {
+    "analytics": false
+  }
 }
