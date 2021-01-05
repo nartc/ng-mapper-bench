@@ -101,6 +101,10 @@
           "options": {
             "browserTarget": "ng-automapper-bench:build"
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {}
         }
       }
     }
