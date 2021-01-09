@@ -57,6 +57,17 @@ Mapper.createMap(OldBio, OldBioVm)
     selector: 'app-root',
     template: `
         <!--The content below is only a placeholder and can be replaced.-->
+        <pre>
+Mapping from <code>User</code> to <code>UserVm</code>
+<code>user.firstName</code> -> <code>vm.first</code>
+<code>user.lastName</code> -> <code>vm.last</code>
+<code>user.firstName + user.lastName</code> -> <code>vm.full</code>
+            
+<code>user.bio.job</code> -> <code>vm.bio.job</code>
+<code>user.bio.age > 18</code> -> <code>vm.bio.isAdult</code>
+<code>user.bio.birthday</code> of type <code>Date</code> -> <code>vm.bio.birthday</code> of type <code>string</code>
+        </pre>
+
         <p>
             {{isExecuting ? 'executing...' : 'waiting. open your console'}}
         </p>
@@ -64,25 +75,25 @@ Mapper.createMap(OldBio, OldBioVm)
         <input type="text" [(ngModel)]="times" placeholder="how many iterations?">
         <br>
         <br>
-        <button (click)="map(1)">map</button>
+        <button (click)="map(1)">@nartc/automapper</button>
         <br>
         <br>
-        <button (click)="map(2)">mapMorphism</button>
+        <button (click)="map(2)">morphism</button>
         <br>
         <br>
-        <button (click)="map(3)">mapMorphismWithMapper</button>
+        <button (click)="map(3)">morphism (with mapper approach)</button>
         <br>
         <br>
-        <button (click)="map(4)">mapClassTransformer</button>
+        <button (click)="map(4)">class-transformer</button>
         <br>
         <br>
-        <button (click)="map(5)">mapClassTransformerIterative</button>
+        <button (click)="map(5)">class-transformer (iterative)</button>
         <br>
         <br>
-        <button (click)="map(6)">classMapperMap</button>
+        <button (click)="map(6)">@automapper/core + @automapper/classes</button>
         <br>
         <br>
-        <button (click)="map(7)">pojosMapperMap</button>
+        <button (click)="map(7)">@automapper/core + @automapper/pojos</button>
         <br>
         <br>
         <button (click)="all()">All</button>
@@ -192,7 +203,7 @@ export class AppComponent {
         const vms = []
 
         let i = this.transformUsers.length;
-        while(i--) {
+        while (i--) {
             vms.push(plainToClass(TransformUserVm, this.transformUsers[i], {excludeExtraneousValues: true}))
         }
 
