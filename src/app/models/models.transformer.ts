@@ -25,16 +25,10 @@ export class TransformBioVm {
 
 export class TransformUserVm {
     @Expose({name: 'firstName'})
-    // @Transform((_, obj) => obj.firstName, {toClassOnly: true})
     first: string;
     @Expose({name: 'lastName'})
-    // @Transform((_, obj) => obj.lastName, {toClassOnly: true})
     last: string;
 
-    // @Expose()
-    // get full() {
-    //     return this.first + this.last;
-    // };
     @Expose()
     @Transform((_, obj) => obj.firstName + ' ' + obj.lastName, {toClassOnly: true})
     full: string;
