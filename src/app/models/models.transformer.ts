@@ -16,10 +16,10 @@ export class TransformBioVm {
     @Expose()
     job: string;
     @Expose()
-    @Transform((_, obj) => obj.age > 18, {toClassOnly: true})
+    @Transform(({obj}) => obj.age > 18, {toClassOnly: true})
     isAdult: boolean;
     @Expose()
-    @Transform(val => val.toDateString())
+    @Transform(({value}) => value.toDateString())
     birthday: string;
 }
 
@@ -30,7 +30,7 @@ export class TransformUserVm {
     last: string;
 
     @Expose()
-    @Transform((_, obj) => obj.firstName + ' ' + obj.lastName, {toClassOnly: true})
+    @Transform(({obj}) => obj.firstName + ' ' + obj.lastName, {toClassOnly: true})
     full: string;
 
     @Expose()
