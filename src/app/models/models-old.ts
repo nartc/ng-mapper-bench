@@ -2,38 +2,38 @@ import {AutoMap} from "@nartc/automapper";
 
 export class OldBio {
     @AutoMap()
-    job: string;
+    job!: string;
     @AutoMap()
-    age: number;
+    age!: number;
     @AutoMap(() => Date)
-    birthday: Date;
+    birthday!: Date;
 }
 
 export class OldUser {
     @AutoMap()
-    firstName: string;
+    firstName!: string;
     @AutoMap()
-    lastName: string;
+    lastName!: string;
     @AutoMap(() => OldBio)
-    bio: OldBio;
+    bio!: OldBio;
 }
 
 export class OldBioVm {
     @AutoMap()
-    job: string;
+    job!: string;
     @AutoMap()
-    isAdult: boolean;
+    isAdult!: boolean;
     @AutoMap()
-    birthday: string;
+    birthday!: string;
 }
 
 export class OldUserVm {
     @AutoMap()
-    first: string;
+    first!: string;
     @AutoMap()
-    last: string;
+    last!: string;
     @AutoMap()
-    full: string;
+    full!: string;
     @AutoMap(() => OldBioVm)
-    bio: OldBioVm;
+    bio!: OldBioVm;
 }

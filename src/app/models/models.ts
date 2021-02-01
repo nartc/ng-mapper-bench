@@ -2,38 +2,38 @@ import {AutoMap} from "@automapper/classes";
 
 export class Bio {
     @AutoMap()
-    job: string;
+    job!: string;
     @AutoMap()
-    age: number;
+    age!: number;
     @AutoMap()
-    birthday: Date;
+    birthday!: Date;
 }
 
 export class User {
     @AutoMap()
-    firstName: string;
+    firstName!: string;
     @AutoMap()
-    lastName: string;
+    lastName!: string;
     @AutoMap(() => Bio)
-    bio: Bio;
+    bio!: Bio;
 }
 
 export class BioVm {
     @AutoMap()
-    job: string;
+    job!: string;
     @AutoMap()
-    isAdult: boolean;
+    isAdult!: boolean;
     @AutoMap()
-    birthday: string;
+    birthday!: string;
 }
 
 export class UserVm {
     @AutoMap()
-    first: string;
+    first!: string;
     @AutoMap()
-    last: string;
+    last!: string;
     @AutoMap()
-    full: string;
+    full!: string;
     @AutoMap(() => BioVm)
-    bio: BioVm;
+    bio!: BioVm;
 }

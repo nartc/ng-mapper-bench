@@ -1,39 +1,39 @@
 import {Expose, Transform, Type} from "class-transformer";
 
 export class TransformBio {
-    job: string;
-    age: number;
-    birthday: Date;
+    job!: string;
+    age!: number;
+    birthday!: Date;
 }
 
 export class TransformUser {
-    firstName: string;
-    lastName: string;
-    bio: TransformBio;
+    firstName!: string;
+    lastName!: string;
+    bio!: TransformBio;
 }
 
 export class TransformBioVm {
     @Expose()
-    job: string;
+    job!: string;
     @Expose()
     @Transform(({obj}) => obj.age > 18, {toClassOnly: true})
-    isAdult: boolean;
+    isAdult!: boolean;
     @Expose()
     @Transform(({value}) => value.toDateString())
-    birthday: string;
+    birthday!: string;
 }
 
 export class TransformUserVm {
     @Expose({name: 'firstName'})
-    first: string;
+    first!: string;
     @Expose({name: 'lastName'})
-    last: string;
+    last!: string;
 
     @Expose()
     @Transform(({obj}) => obj.firstName + ' ' + obj.lastName, {toClassOnly: true})
-    full: string;
+    full!: string;
 
     @Expose()
     @Type(() => TransformBioVm)
-    bio: TransformBioVm;
+    bio!: TransformBioVm;
 }

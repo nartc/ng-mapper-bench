@@ -104,13 +104,13 @@ export class AppComponent {
     title = 'ng-automapper-bench';
 
     times = '20';
-    mapperTimes = [];
-    mapMorphismTimes = [];
-    mapMorphismWithMapperTimes = [];
-    classMapperTimes = [];
-    pojosMapperTimes = []
-    transformMapperTimes = []
-    transformIterativeMapperTimes = []
+    mapperTimes: any[] = [];
+    mapMorphismTimes: any[] = [];
+    mapMorphismWithMapperTimes: any[] = [];
+    classMapperTimes: any[] = [];
+    pojosMapperTimes: any[] = []
+    transformMapperTimes: any[] = []
+    transformIterativeMapperTimes: any[] = []
 
     isExecuting = false;
 
@@ -131,7 +131,7 @@ export class AppComponent {
         this.isExecuting = true;
         timer(0).pipe(
             switchMapTo(defer(() => {
-                const tabularData = [];
+                const tabularData: any = [];
 
                 this.ngZone.runOutsideAngular(() => {
                     this.mapInternal(1, false)
@@ -159,7 +159,7 @@ export class AppComponent {
         })
     }
 
-    pushTo(type, tabularData) {
+    pushTo(type: any, tabularData: any) {
         tabularData.push({
             name: this.mapperMap[type][2],
             value: this.toMs(this.mapperMap[type][1].reduce((acc, cur) => acc + cur) / this.mapperMap[type][1].length)
