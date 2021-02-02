@@ -2,17 +2,12 @@ import {Component, Inject, NgZone} from '@angular/core';
 import {classes} from "@automapper/classes";
 import {CamelCaseNamingConvention, createMapper, mapFrom} from "@automapper/core";
 import {pojos} from "@automapper/pojos";
-import {mapFrom as oldMapFrom, Mapper} from '@nartc/automapper';
-import {plainToClass} from "class-transformer";
-import {morphism} from "morphism";
 import 'reflect-metadata';
 import {defer, of, timer} from "rxjs";
 import {switchMapTo} from "rxjs/operators";
-import {OldUsersToken, TransformUsersToken, UsersToken} from "../constants";
+import {UsersToken} from "../constants";
 import {Bio, BioVm, User, UserVm} from "./models/models";
-import {OldBio, OldBioVm, OldUser, OldUserVm} from './models/models-old';
 import {BioInterface, BioVmInterface, runMetadata, UserInterface, UserVmInterface} from "./models/models.interface";
-import {TransformUser, TransformUserVm} from "./models/models.transformer";
 
 const classMapper = createMapper({
     name: 'class',
@@ -44,15 +39,6 @@ pojosMapper.createMap<UserInterface, UserVmInterface>('User', 'UserVm')
     .forMember(d => d.last, mapFrom(s => s.lastName))
     .forMember(d => d.full, mapFrom(s => s.firstName + ' ' + s.lastName));
 
-Mapper.createMap(OldUser, OldUserVm)
-    .forMember(d => d.first, oldMapFrom(s => s.firstName))
-    .forMember(d => d.last, oldMapFrom(s => s.lastName))
-    .forMember(d => d.full, oldMapFrom(s => s.firstName + ' ' + s.lastName));
-Mapper.createMap(OldBio, OldBioVm)
-    .forMember(d => d.job, oldMapFrom(s => s.job))
-    .forMember(d => d.isAdult, oldMapFrom(s => s.age > 18))
-    .forMember(d => d.birthday, oldMapFrom(s => s.birthday.toDateString()));
-
 @Component({
     selector: 'app-root',
     template: `
@@ -75,21 +61,21 @@ Mapping from <code>User</code> to <code>UserVm</code>
         <input type="text" [(ngModel)]="times" placeholder="how many iterations?">
         <br>
         <br>
-        <button (click)="map(1)">@nartc/automapper</button>
-        <br>
-        <br>
-        <button (click)="map(2)">morphism</button>
-        <br>
-        <br>
-        <button (click)="map(3)">morphism (with mapper approach)</button>
-        <br>
-        <br>
-        <button (click)="map(4)">class-transformer</button>
-        <br>
-        <br>
-        <button (click)="map(5)">class-transformer (iterative)</button>
-        <br>
-        <br>
+        <!--        <button (click)="map(1)">@nartc/automapper</button>-->
+        <!--        <br>-->
+        <!--        <br>-->
+        <!--        <button (click)="map(2)">morphism</button>-->
+        <!--        <br>-->
+        <!--        <br>-->
+        <!--        <button (click)="map(3)">morphism (with mapper approach)</button>-->
+        <!--        <br>-->
+        <!--        <br>-->
+        <!--        <button (click)="map(4)">class-transformer</button>-->
+        <!--        <br>-->
+        <!--        <br>-->
+        <!--        <button (click)="map(5)">class-transformer (iterative)</button>-->
+        <!--        <br>-->
+        <!--        <br>-->
         <button (click)="map(6)">@automapper/core + @automapper/classes</button>
         <br>
         <br>
@@ -124,7 +110,7 @@ export class AppComponent {
         7: [this.mapPojosMapper.bind(this), this.pojosMapperTimes, '@automapper/pojos'],
     };
 
-    constructor(@Inject(UsersToken) private users: User[], @Inject(OldUsersToken) private oldUsers: OldUser[], @Inject(TransformUsersToken) private transformUsers: TransformUser[], private ngZone: NgZone) {
+    constructor(@Inject(UsersToken) private users: User[], private ngZone: NgZone) {
     }
 
     all() {
@@ -188,31 +174,31 @@ export class AppComponent {
     }
 
     mapTransform(iteration: number, times: number, log = true) {
-        const t0 = performance.now();
-        const vms = plainToClass(TransformUserVm, this.transformUsers, {excludeExtraneousValues: true})
-        const t1 = performance.now();
-
-        if (log) {
-            console.log(`transform mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
-        }
-        this.transformMapperTimes.push(t1 - t0);
+        // const t0 = performance.now();
+        // const vms = plainToClass(TransformUserVm, this.transformUsers, {excludeExtraneousValues: true})
+        // const t1 = performance.now();
+        //
+        // if (log) {
+        //     console.log(`transform mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
+        // }
+        // this.transformMapperTimes.push(t1 - t0);
     }
 
     mapTransformIterative(iteration: number, times: number, log = true) {
-        const t0 = performance.now();
-        const vms = []
-
-        let i = this.transformUsers.length;
-        while (i--) {
-            vms.push(plainToClass(TransformUserVm, this.transformUsers[i], {excludeExtraneousValues: true}))
-        }
-
-        const t1 = performance.now();
-
-        if (log) {
-            console.log(`transform iterative mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
-        }
-        this.transformIterativeMapperTimes.push(t1 - t0);
+        // const t0 = performance.now();
+        // const vms = []
+        //
+        // let i = this.transformUsers.length;
+        // while (i--) {
+        //     vms.push(plainToClass(TransformUserVm, this.transformUsers[i], {excludeExtraneousValues: true}))
+        // }
+        //
+        // const t1 = performance.now();
+        //
+        // if (log) {
+        //     console.log(`transform iterative mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
+        // }
+        // this.transformIterativeMapperTimes.push(t1 - t0);
     }
 
     mapClassMapper(iteration: number, times: number, log = true) {
@@ -238,53 +224,53 @@ export class AppComponent {
     }
 
     mapMapper(iteration: number, times: number, log = true) {
-        const t0 = performance.now();
-        const vms = Mapper.mapArray(this.oldUsers, OldUserVm);
-        const t1 = performance.now();
-        if (log) {
-            console.log(`mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
-        }
-        this.mapperTimes.push(t1 - t0);
+        // const t0 = performance.now();
+        // const vms = Mapper.mapArray(this.oldUsers, OldUserVm);
+        // const t1 = performance.now();
+        // if (log) {
+        //     console.log(`mapper ${times - iteration}`, this.toMs((t1 - t0)), vms);
+        // }
+        // this.mapperTimes.push(t1 - t0);
     }
 
     mapMorphism(iteration: number, times: number, log = true) {
-        const t0 = performance.now();
-        const vmsMorp = morphism({
-            first: 'firstName',
-            last: 'lastName',
-            full: ({firstName, lastName}: any) => firstName + ' ' + lastName,
-            bio: {
-                job: 'bio.job',
-                isAdult: ({bio}: any) => bio.age > 18,
-                birthday: ({bio}: any) => bio.birthday.toDateString()
-            }
-        }, this.users);
-        const t1 = performance.now();
-        if (log) {
-            console.log(`mapper-morphism ${times - iteration}`, this.toMs((t1 - t0)), vmsMorp);
-        }
-        this.mapMorphismTimes.push(t1 - t0);
+        // const t0 = performance.now();
+        // const vmsMorp = morphism({
+        //     first: 'firstName',
+        //     last: 'lastName',
+        //     full: ({firstName, lastName}: any) => firstName + ' ' + lastName,
+        //     bio: {
+        //         job: 'bio.job',
+        //         isAdult: ({bio}: any) => bio.age > 18,
+        //         birthday: ({bio}: any) => bio.birthday.toDateString()
+        //     }
+        // }, this.users);
+        // const t1 = performance.now();
+        // if (log) {
+        //     console.log(`mapper-morphism ${times - iteration}`, this.toMs((t1 - t0)), vmsMorp);
+        // }
+        // this.mapMorphismTimes.push(t1 - t0);
     }
 
     mapMorphismWithMapper(iteration: number, times: number, log = true) {
-        const t0 = performance.now();
-        const mapper = morphism({
-            first: 'firstName',
-            last: 'lastName',
-            full: ({firstName, lastName}: any) => firstName + ' ' + lastName,
-            bio: {
-                job: 'bio.job',
-                isAdult: ({bio}: any) => bio.age > 18,
-                birthday: ({bio}: any) => bio.birthday.toDateString()
-            }
-        });
-
-        const vmsMorpMapper = mapper(this.users);
-        const t1 = performance.now();
-        if (log) {
-            console.log(`mapper-morphism-create-mapper ${times - iteration}`, this.toMs((t1 - t0)), vmsMorpMapper);
-        }
-        this.mapMorphismWithMapperTimes.push(t1 - t0);
+        // const t0 = performance.now();
+        // const mapper = morphism({
+        //     first: 'firstName',
+        //     last: 'lastName',
+        //     full: ({firstName, lastName}: any) => firstName + ' ' + lastName,
+        //     bio: {
+        //         job: 'bio.job',
+        //         isAdult: ({bio}: any) => bio.age > 18,
+        //         birthday: ({bio}: any) => bio.birthday.toDateString()
+        //     }
+        // });
+        //
+        // const vmsMorpMapper = mapper(this.users);
+        // const t1 = performance.now();
+        // if (log) {
+        //     console.log(`mapper-morphism-create-mapper ${times - iteration}`, this.toMs((t1 - t0)), vmsMorpMapper);
+        // }
+        // this.mapMorphismWithMapperTimes.push(t1 - t0);
     }
 
     toMs(range: number) {

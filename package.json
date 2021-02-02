@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "build:report": "ng build --prod --source-map",
+    "explore:report": "source-map-explorer dist/ng-automapper-bench/**/*.js"
   },
   "private": true,
   "dependencies": {
