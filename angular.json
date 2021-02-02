@@ -81,6 +81,11 @@
                   "maximumWarning": "6kb",
                   "maximumError": "10kb"
                 }
+              ],
+              "allowedCommonJsDependencies": [
+                "@automapper/core",
+                "@automapper/classes",
+                "@automapper/pojos"
               ]
             }
           }
