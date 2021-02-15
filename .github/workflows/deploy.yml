@@ -29,4 +29,5 @@ jobs:
         run: npm ci
       # Runs a single command using the runners shell
       - name: ng deploy
+        env: ${{secrets.GH_TOKEN}}
         run: npx ng deploy --base-href=/ng-mapper-bench/
