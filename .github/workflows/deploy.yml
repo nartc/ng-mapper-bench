@@ -31,4 +31,4 @@ jobs:
       - name: ng deploy
         env:
           GITHUB_TOKEN: ${{secrets.GH_TOKEN}}
-        run: npx ng deploy --base-href=/ng-mapper-bench/
+        run: npx ng deploy --base-href=/ng-mapper-bench/ --no-silent
