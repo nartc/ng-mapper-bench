@@ -2,6 +2,7 @@ import {Component, Inject, NgZone} from '@angular/core';
 import {classes} from "@automapper/classes";
 import {CamelCaseNamingConvention, createMapper, mapFrom} from "@automapper/core";
 import {pojos} from "@automapper/pojos";
+import {Resolver} from "@automapper/types";
 import {mapFrom as oldMapFrom, Mapper} from '@nartc/automapper';
 import {plainToClass} from "class-transformer";
 import {morphism} from "morphism";
@@ -20,13 +21,19 @@ const classMapper = createMapper({
     namingConventions: new CamelCaseNamingConvention()
 })
 
+const fullNameResolver: Resolver<User, UserVm, string> = {
+    resolve(source: User): string {
+        return source.firstName + ' ' + source.lastName;
+    }
+}
+
 classMapper.createMap(Bio, BioVm)
     .forMember(d => d.isAdult, mapFrom(s => s.age > 18))
     .forMember(d => d.birthday, mapFrom(s => s.birthday.toDateString()));
 classMapper.createMap(User, UserVm)
     .forMember(d => d.first, mapFrom(s => s.firstName))
     .forMember(d => d.last, mapFrom(s => s.lastName))
-    .forMember(d => d.full, mapFrom(s => s.firstName + ' ' + s.lastName));
+    .forMember(d => d.full, mapFrom(fullNameResolver));
 
 const pojosMapper = createMapper({
     name: 'pojos',
