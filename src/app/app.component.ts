@@ -23,7 +23,7 @@ const classMapper = createMapper({
 
 const fullNameResolver: Resolver<User, UserVm, string> = {
     resolve(source: User): string {
-        return source.firstName + ' ' + source.lastName;
+        return source.fullName;
     }
 }
 

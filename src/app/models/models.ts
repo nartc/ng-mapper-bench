@@ -14,8 +14,12 @@ export class User {
     firstName!: string;
     @AutoMap()
     lastName!: string;
-    @AutoMap(() => Bio)
+    @AutoMap({typeFn: () => Bio})
     bio!: Bio;
+
+    get fullName() {
+        return this.firstName + ' ' + this.lastName;
+    }
 }
 
 export class BioVm {
@@ -34,6 +38,6 @@ export class UserVm {
     last!: string;
     @AutoMap()
     full!: string;
-    @AutoMap(() => BioVm)
+    @AutoMap({typeFn: () => BioVm})
     bio!: BioVm;
 }
