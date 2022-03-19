@@ -14,7 +14,7 @@ export class User {
     firstName!: string;
     @AutoMap()
     lastName!: string;
-    @AutoMap({typeFn: () => Bio})
+    @AutoMap(() => Bio)
     bio!: Bio;
 
     get fullName() {
@@ -38,6 +38,6 @@ export class UserVm {
     last!: string;
     @AutoMap()
     full!: string;
-    @AutoMap({typeFn: () => BioVm})
+    @AutoMap(() => BioVm)
     bio!: BioVm;
 }

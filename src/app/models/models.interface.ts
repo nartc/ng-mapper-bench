@@ -1,4 +1,4 @@
-import {createMetadataMap} from "@automapper/pojos";
+import {PojosMetadataMap} from "@automapper/pojos";
 
 export interface BioInterface {
     job: string;
@@ -26,25 +26,25 @@ export interface UserVmInterface {
 }
 
 export function runMetadata() {
-    createMetadataMap<BioInterface>('Bio', {
+    PojosMetadataMap.create<BioInterface>('Bio', {
         age: Number,
         job: String,
         birthday: Date
     })
 
-    createMetadataMap<BioVmInterface>('BioVm', {
+    PojosMetadataMap.create<BioVmInterface>('BioVm', {
         birthday: String,
         isAdult: Boolean,
         job: String
     })
 
-    createMetadataMap<UserInterface>('User', {
+    PojosMetadataMap.create<UserInterface>('User', {
         bio: 'Bio',
         firstName: String,
         lastName: String
     })
 
-    createMetadataMap<UserVmInterface>('UserVm', {
+    PojosMetadataMap.create<UserVmInterface>('UserVm', {
         first: String,
         last: String,
         full: String,
