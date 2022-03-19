@@ -1,8 +1,7 @@
 import {Component, Inject, NgZone} from '@angular/core';
 import {classes} from "@automapper/classes";
-import {CamelCaseNamingConvention, createMapper, mapFrom} from "@automapper/core";
+import {CamelCaseNamingConvention, createMapper, mapFrom, Resolver} from "@automapper/core";
 import {pojos} from "@automapper/pojos";
-import {Resolver} from "@automapper/types";
 import {mapFrom as oldMapFrom, Mapper} from '@nartc/automapper';
 import {plainToClass} from "class-transformer";
 import {morphism} from "morphism";
