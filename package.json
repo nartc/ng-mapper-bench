@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "analyze": "webpack-bundle-analyzer dist/ng-automapper-bench/stats.json"
   },
   "private": true,
   "dependencies": {
@@ -18,9 +19,9 @@
     "@angular/platform-browser": "~13.3.0",
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
-    "@automapper/classes": "~8.0.0-beta.0",
-    "@automapper/core": "~8.0.0-beta.0",
-    "@automapper/pojos": "~8.0.0-beta.0",
+    "@automapper/classes": "~8.0.0-beta.14",
+    "@automapper/core": "~8.0.0-beta.14",
+    "@automapper/pojos": "~8.0.0-beta.14",
     "@nartc/automapper": "^7.0.4",
     "class-transformer": "^0.5.1",
     "morphism": "^1.12.3",
@@ -40,6 +41,7 @@
     "source-map-explorer": "2.5.2",
     "ts-node": "~10.7.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.6.2"
+    "typescript": "~4.6.2",
+    "webpack-bundle-analyzer": "4.5.0"
   }
 }
