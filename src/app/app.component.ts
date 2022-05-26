@@ -10,7 +10,7 @@ import {
 } from "@automapper/core";
 import { pojos } from "@automapper/pojos";
 import { mapFrom as oldMapFrom, Mapper } from "@nartc/automapper";
-import { plainToClass } from "class-transformer";
+import { plainToClass, plainToInstance } from "class-transformer";
 import { morphism } from "morphism";
 import "reflect-metadata";
 import { defer, of, timer } from "rxjs";
@@ -202,12 +202,12 @@ export class AppComponent {
     ],
     4: [
       this.mapTransform.bind(this),
-      this.transformIterativeMapperTimes,
+      this.transformMapperTimes,
       "class-transformer",
     ],
     5: [
       this.mapTransformIterative.bind(this),
-      this.transformMapperTimes,
+      this.transformIterativeMapperTimes,
       "class-transformer (iterative)",
     ],
     6: [
@@ -304,7 +304,7 @@ export class AppComponent {
 
   mapTransform(iteration: number, times: number, log = true) {
     const t0 = performance.now();
-    const vms = plainToClass(TransformUserVm, this.transformUsers, {
+    const vms = plainToInstance(TransformUserVm, this.transformUsers, {
       excludeExtraneousValues: true,
     });
     const t1 = performance.now();
